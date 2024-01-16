@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "codeknowledgegpt"
+version = "0.1.0"
+description = ""
+authors = ["zoohta <koh.0430.ta@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10,<3.12,"
+langchain = "^0.1.0"
+openai = "^1.7.2"
+langchain-openai = "^0.0.2.post1"
+validators = "^0.22.0"
+playwright = "^1.40.0"
+beautifulsoup4 = "^4.12.2"
+selenium = "^4.16.0"
+faiss-cpu = "^1.7.4"
+html2text = "^2020.1.16"
+
+
+[tool.poetry.group.test.dependencies]
+python-dotenv = "^1.0.0"
+setuptools = "^69.0.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
