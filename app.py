@@ -78,7 +78,7 @@ def extract_content(query: str, base_url: str, option: str) -> list:
 
         user's query: how to rename columns
         base URL: https://pandas.pydata.org/docs/search.html?q=
-        https://pandas.pydata.org/docs/search.html?q=rename
+        https://pandas.pydata.org/docs/search.html?q=rename+columns
 
         user's query: {query}
         base URL: {base_url}
@@ -97,8 +97,8 @@ def extract_content(query: str, base_url: str, option: str) -> list:
     model = OpenAI(temperature=0, openai_api_key=st.session_state.api_key)
     generated_url = model.invoke(model_input.to_string()).strip()
     # check if output is a valid URL
-    if not validators.url(generated_url):
-        raise ValueError(f'Output is not a valid URL! {generated_url}')
+    # if not validators.url(generated_url):
+    #     raise ValueError(f'Output is not a valid URL! {generated_url}')
 
     # Get the search results
     options = ChromeOptions()
@@ -186,7 +186,7 @@ if "messages" not in st.session_state:
 for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
-prompt = st.chat_input()
+prompt = st.chat_input("Ask a question!")
 if prompt:
     if not st.session_state.api_key:
         st.info("Please add your OpenAI API key to continue.")
@@ -200,8 +200,12 @@ if prompt:
     st.chat_message("user").write(prompt)
 
     base_url = base_urls[st.session_state.option]
-    documents = extract_content(prompt, base_url, st.session_state.option)
-    vectordb = save_documents_in_vectorstore(documents, st.session_state.api_key)
+    with st.status("Searching..."):
+        st.write("Fetching data from official documentation...")
+        documents = extract_content(prompt, base_url, st.session_state.option)
+        st.write("Saving data in vectorstore...")
+        vectordb = save_documents_in_vectorstore(documents, st.session_state.api_key)
+        st.write("Generating response...")
     retriever = vectordb.as_retriever()
     llm = ChatOpenAI(model_name="gpt-3.5-turbo-1106", temperature=0, openai_api_key=st.session_state.api_key)
     system_prompt = """You are an outstanding assistant for question-answering tasks. 
@@ -223,8 +227,17 @@ if prompt:
             | llm
             | StrOutputParser()
     )
-    response = rag_chain.invoke(prompt)
-    st.session_state.messages.append({"role": "assistant", "content": response})
-    st.chat_message("assistant").write(response)
+    # response = rag_chain.invoke(prompt)
+    # st.session_state.messages.append({"role": "assistant", "content": response})
+    # st.chat_message("assistant").write(response)
+    with st.chat_message("assistant"):
+        message_placeholder = st.empty()
+        full_response = ""
+        assistant_response = rag_chain.stream(prompt)
+        for chunk in assistant_response:
+            full_response += chunk
+            message_placeholder.markdown(full_response + "▌")
+        message_placeholder.markdown(full_response)
+    st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-st.button('Reset Chat', on_click=reset_conversation)
+st.button('Clear Chat', on_click=reset_conversation)
