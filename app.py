@@ -22,6 +22,7 @@ def setup_sidebar():
     Setup the streamlit sidebar
     """
     with st.sidebar:
+        st.image("data/app_logo.png")
         st.markdown(
             "## How to use\n"
             "1. Enter your [OpenAI API key](https://platform.openai.com/account/api-keys) below🔑\n" 
@@ -172,9 +173,12 @@ base_urls = {"Pandas": "https://pandas.pydata.org/docs/search.html?q=",
 
 ### Main Execution
 setup_sidebar()
-st.title("CodeDoc Assistant")
+if st.session_state.option and st.session_state.option in base_urls:
+    st.image(f"data/{st.session_state.option}.png", width=400)
+st.title("📖 CodeDoc Assistant")
 st.caption("Chatbot that helps you find answers to popular python libraries/packages/frameworks "
            "from their official documentations!")
+
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
@@ -224,5 +228,3 @@ if prompt:
     st.chat_message("assistant").write(response)
 
 st.button('Reset Chat', on_click=reset_conversation)
-
-
