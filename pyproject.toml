@@ -17,6 +17,7 @@ selenium = "^4.16.0"
 faiss-cpu = "^1.7.4"
 html2text = "^2020.1.16"
 streamlit = "^1.30.0"
+googlesearch-python = "^1.2.3"
 
 
 [tool.poetry.group.test.dependencies]

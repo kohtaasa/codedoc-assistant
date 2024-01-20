@@ -18,38 +18,38 @@ import pickle
 
 load_dotenv()
 
-# # Prepare template for prompt
-# template = """
-# Based on the user's query and base URL, generate a url to search results.
-# You do not need to use single words from the query if it's long. Extract the main idea from the query and use that to generate the URL.
-# Only output one URL.
-#
-# Example:
-# user's query: transpose table
-# base URL: https://pandas.pydata.org/docs/search.html?q=
-# https://pandas.pydata.org/docs/search.html?q=transpose+table#
-#
-# user's query: {query}
-# base URL: {base_url}
-# """
-#
-# prompt = PromptTemplate(
-#     template=template,
-#     input_variables=['query', 'base_url']
-# )
-#
-# model_input = prompt.format_prompt(
-#     query='how can I group by two columns',
-#     base_url='https://pandas.pydata.org/docs/search.html?q='
-# )
-#
-# model = OpenAI(temperature=0)
-# generated_url = model.invoke(model_input.to_string())
-# print(generated_url)
-#
-# # check if output is a valid URL
-# if not validators.url(generated_url):
-#     raise ValueError('Output is not a valid URL!')
+# Prepare template for prompt
+template = """
+Based on the user's query and base URL, generate an url to search results.
+You do not need to use single words from the query if it's long. Extract the main idea from the query and use that to generate the URL.
+Only output one URL.
+
+Example:
+user's query: transpose table
+base URL: https://pandas.pydata.org/docs/search.html?q=
+https://pandas.pydata.org/docs/search.html?q=transpose+table#
+
+user's query: {query}
+base URL: {base_url}
+"""
+
+prompt = PromptTemplate(
+    template=template,
+    input_variables=['query', 'base_url']
+)
+
+model_input = prompt.format_prompt(
+    query='how can I group by two columns',
+    base_url='https://pandas.pydata.org/docs/search.html?q='
+)
+
+model = OpenAI(temperature=0)
+generated_url = model.invoke(model_input.to_string())
+print(generated_url)
+
+# check if output is a valid URL
+if not validators.url(generated_url):
+    raise ValueError('Output is not a valid URL!')
 
 # Get the search results
 # Load HTML
@@ -122,7 +122,7 @@ Please include the coding example only in Python as well.
 Create a new example if the example you find in the context is not enough. Please provide what it returns as well.
 Include source at the end.
 Question: {question} 
-Context: {context} 
+Context: {context}
 Answer:
 """
 prompt = ChatPromptTemplate.from_template(template)

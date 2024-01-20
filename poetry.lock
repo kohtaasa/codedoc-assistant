@@ -650,6 +650,21 @@ gitdb = ">=4.0.1,<5"
 test = ["black", "coverage[toml]", "ddt (>=1.1.1,!=1.4.3)", "mock", "mypy", "pre-commit", "pytest (>=7.3.1)", "pytest-cov", "pytest-instafail", "pytest-mock", "pytest-sugar", "sumtypes"]
 
 [[package]]
+name = "googlesearch-python"
+version = "1.2.3"
+description = "A Python library for scraping the Google search engine."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "googlesearch-python-1.2.3.tar.gz", hash = "sha256:38b251121dd140439bd08cdf2a05a0b195d852908ee2bfed30e57d16aa68ae5e"},
+]
+
+[package.dependencies]
+beautifulsoup4 = ">=4.9"
+requests = ">=2.20"
+
+[[package]]
 name = "greenlet"
 version = "3.0.1"
 description = "Lightweight in-process concurrent programming"
@@ -2860,4 +2875,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10,<3.12,"
-content-hash = "d8fc29ae765e4dfcc29da7c5f878fee199b6a5d15e41568688dd32535c1c57ac"
+content-hash = "6a2f21e1b9e01d65fa3cebfd266f67586ee78c645824ff7a1ef393f1f9fb896d"
