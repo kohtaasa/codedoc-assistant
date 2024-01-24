@@ -9,6 +9,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from googlesearch import search
 from urllib.parse import urlparse
@@ -103,6 +104,7 @@ def extract_content(query: str, base_url: str, option: str) -> list:
     # Get the search results
     options = ChromeOptions()
     options.add_argument("--headless=new")
+    options.add_argument("--disable-gpu")
     driver = webdriver.Chrome(options=options)
     driver.implicitly_wait(2)
     driver.get(generated_url)
