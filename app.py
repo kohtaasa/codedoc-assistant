@@ -8,12 +8,12 @@ from langchain_community.vectorstores import FAISS
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options as ChromeOptions
+from playwright.async_api import async_playwright
 from googlesearch import search
 from urllib.parse import urlparse
 
 import streamlit as st
+import asyncio
 import validators
 
 
@@ -55,6 +55,21 @@ def get_domain(url: str) -> str:
     """
     parsed_url = urlparse(url)
     return parsed_url.netloc
+
+
+async def get_html(url: str) -> str:
+    """
+    Get HTML from a URL using Playwright
+    :param url:
+    :return: html content
+    """
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        page = await browser.new_page()
+        await page.goto(url)
+        html = await page.content()
+        await browser.close()
+    return html
 
 
 def extract_content(query: str, base_url: str, option: str) -> list:
@@ -101,13 +116,9 @@ def extract_content(query: str, base_url: str, option: str) -> list:
     #     raise ValueError(f'Output is not a valid URL! {generated_url}')
 
     # Get the search results
-    options = ChromeOptions()
-    options.add_argument("--headless=new")
-    driver = webdriver.Chrome(options=options)
-    driver.implicitly_wait(2)
-    driver.get(generated_url)
-    html = driver.page_source
-    driver.quit()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    html = loop.run_until_complete(get_html(generated_url))
 
     # Extract the search results
     soup = BeautifulSoup(html, 'html.parser')
@@ -227,9 +238,7 @@ if prompt:
             | llm
             | StrOutputParser()
     )
-    # response = rag_chain.invoke(prompt)
-    # st.session_state.messages.append({"role": "assistant", "content": response})
-    # st.chat_message("assistant").write(response)
+
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
         full_response = ""
