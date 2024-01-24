@@ -9,8 +9,8 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options as ChromeOptions
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service as ChromeService
 from googlesearch import search
 from urllib.parse import urlparse
 
@@ -102,10 +102,12 @@ def extract_content(query: str, base_url: str, option: str) -> list:
     #     raise ValueError(f'Output is not a valid URL! {generated_url}')
 
     # Get the search results
-    options = ChromeOptions()
-    options.add_argument("--headless=new")
-    options.add_argument("--disable-gpu")
-    driver = webdriver.Chrome(options=options)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--window-size=1920x1080')
+    chrome_options.add_argument('--disable-gpu')
+
+    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
     driver.implicitly_wait(2)
     driver.get(generated_url)
     html = driver.page_source
@@ -229,9 +231,7 @@ if prompt:
             | llm
             | StrOutputParser()
     )
-    # response = rag_chain.invoke(prompt)
-    # st.session_state.messages.append({"role": "assistant", "content": response})
-    # st.chat_message("assistant").write(response)
+
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
         full_response = ""
