@@ -14,7 +14,10 @@ from urllib.parse import urlparse
 
 import streamlit as st
 import asyncio
+import os
 import validators
+
+os.system('playwright install')
 
 
 def setup_sidebar():
