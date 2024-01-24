@@ -18,6 +18,7 @@ import os
 import validators
 
 os.system('playwright install')
+os.system('sudo playwright install-deps')
 
 
 def setup_sidebar():
